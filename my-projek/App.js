@@ -7,7 +7,7 @@ export default class App extends React.Component {
     this.state = {
       header: 'Kalkulator',
       hasil: 0,
-      angka1:0,
+      angka1: ''
 
     }
   }
@@ -16,7 +16,7 @@ export default class App extends React.Component {
   //   const {angka1, angka2} = this.state
   //   this.setState({hasil: angka1 + angka2})
   hitung = () => {
-    let {angka1} = this.state
+    const {angka1} = this.state
     this.setState({hasil: eval(angka1.valueOf())})
   }
 
@@ -29,8 +29,12 @@ export default class App extends React.Component {
       <TextInput
       style={styles.inputBox}
         value={ String(this.state.angka1)}
-         onChangeText={(text) => this.setState({angka1: text})}
-         onUp={this.hitung} />
+         onChangeText={(text) => this.setState({angka1: text})
+       }
+          />
+
+         <Button title="klik"
+         onPress={this.hitung}/>
          <Text style={{fontSize:25}}> Hasil </Text>
             <Text style={{fontSize:20}}> {this.state.hasil} </Text>
       </View>
