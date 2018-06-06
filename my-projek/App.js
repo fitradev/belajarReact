@@ -7,7 +7,7 @@ export default class App extends React.Component {
     this.state = {
       header: 'Kalkulator',
       hasil: 0,
-      angka1: ''
+      angka1:0,
 
     }
   }
@@ -16,7 +16,7 @@ export default class App extends React.Component {
   //   const {angka1, angka2} = this.state
   //   this.setState({hasil: angka1 + angka2})
   hitung = () => {
-    const {angka1} = this.state
+    let {angka1} = this.state
     this.setState({hasil: eval(angka1.valueOf())})
   }
 
@@ -25,12 +25,14 @@ export default class App extends React.Component {
     return (
       <View style={styles.container}>
       <Text style={ {fontSize:32}}> {this.state.header}</Text>
-        <Text style={{fontSize:25}}> {this.state.hasil} </Text>
+
       <TextInput
       style={styles.inputBox}
         value={ String(this.state.angka1)}
-        onChangeText={this.hitung} />
-
+         onChangeText={(text) => this.setState({angka1: text})}
+         onUp={this.hitung} />
+         <Text style={{fontSize:25}}> Hasil </Text>
+            <Text style={{fontSize:20}}> {this.state.hasil} </Text>
       </View>
     );
   }
