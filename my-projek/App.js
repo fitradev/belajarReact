@@ -1,5 +1,6 @@
 import React from 'react';
-import { StyleSheet, Text, View, Button, TextInput } from 'react-native';//tempat menambah komponen
+import { StyleSheet, Text, View, Button, TextInput } from 'react-native';
+import About from './components/About.js'
 
 export default class App extends React.Component {
   constructor(){
@@ -7,14 +8,14 @@ export default class App extends React.Component {
     this.state = {
       header: 'Kalkulator',
       hasil: 0,
-      angka1: ''
-
+      angka1: '',
+      showAbout: false
     }
   }
-  calculate(num1, num2, operand) {
+  calculate(num1, num2, operator) {
     let calc;
 
-    switch(operand) {
+    switch(operator) {
       case '+': calc = num1 + num2; break;
       case '-': calc = num1 - num2; break;
       case '*': calc = num1 * num2; break;
@@ -32,14 +33,14 @@ export default class App extends React.Component {
     if (!isNaN(Number(text))) {
       this.setState({angka1: text, hasil: Number(text)});
     } else {
-      const regexRemoveSpace = /\s/g;
-      const regexOnlyOperand = /[\+\-\*\/\:\%\^\x]/g;
-      const textArr = text.replace(regexRemoveSpace, '').split('');
+      const hapusSpasi = /\s/g;
+      const ambilOperator = /[\+\-\*\/\:\%\^\x]/g;
+      const textArr = text.replace(hapusSpasi, '').split('');
       const newArr = [];
       let join = '';
 
       for (let index1 = 0; index1 < textArr.length; index1++) {
-        if (textArr[index1].match(regexOnlyOperand)) {
+        if (textArr[index1].match(ambilOperator)) {
           newArr.push(textArr[index1]);
           join = '';
         } else {
@@ -57,9 +58,9 @@ export default class App extends React.Component {
       let index2 = 0;
       while (index2 < newArr.length - 2) {
         let num1 = newArr[index2];
-        let operand = newArr[index2 + 1];
+        let operator = Arr[index2 + 1];
         let num2 = newArr[index2 + 2];
-        let calc = this.calculate(num1, num2, operand);
+        let calc = this.calculate(num1, num2, operator);
         newArr[index2 + 2] = calc;
         index2 = index2 + 2;
         this.setState({text: text, hasil: calc});
@@ -69,19 +70,33 @@ export default class App extends React.Component {
 
 
   render() {
+
+    const {showAbout} = this.state
     return (
       <View style={styles.container}>
       <Text style={ {fontSize:32}}> {this.state.header}</Text>
-
       <TextInput
       style={styles.inputBox}
-           onChangeText={(text) => this.show(text)}
-
-          />
-
+           onChangeText={(text) => this.show(text)} />
 
          <Text style={{fontSize:25}}> Hasil </Text>
             <Text style={{fontSize:20}}> {this.state.hasil} </Text>
+            {
+              showAbout ?
+                <Button title="Kembali"
+                  onPress = { () => this.setState({showAbout: false}) }/>
+
+            :
+                <Button title= "Tentang"
+                  onPress = { () => this.setState({showAbout: true}) }/>
+          }
+
+            {
+              showAbout && <About deskripsi={"Become to Expert"}/>
+            }
+            {
+              showAbout || <About deskripsi={"Fitra Dev"}/>
+            }
       </View>
     );
   }
