@@ -11,13 +11,60 @@ export default class App extends React.Component {
 
     }
   }
+  calculate(num1, num2, operand) {
+    let calc;
 
-  // hitung = () =>{
-  //   const {angka1, angka2} = this.state
-  //   this.setState({hasil: angka1 + angka2})
-  hitung = () => {
-    const {angka1} = this.state
-    this.setState({hasil: eval(angka1.valueOf())})
+    switch(operand) {
+      case '+': calc = num1 + num2; break;
+      case '-': calc = num1 - num2; break;
+      case '*': calc = num1 * num2; break;
+      case 'x': calc = num1 * num2; break;
+      case '/': calc = num1 / num2; break;
+      case ':': calc = num1 / num2; break;
+      case '%': calc = num1 % num2; break;
+      case '^': calc = Math.pow(num1, num2); break;
+    }
+
+    return calc;
+  }
+
+  show(text) {
+    if (!isNaN(Number(text))) {
+      this.setState({angka1: text, hasil: Number(text)});
+    } else {
+      const regexRemoveSpace = /\s/g;
+      const regexOnlyOperand = /[\+\-\*\/\:\%\^\x]/g;
+      const textArr = text.replace(regexRemoveSpace, '').split('');
+      const newArr = [];
+      let join = '';
+
+      for (let index1 = 0; index1 < textArr.length; index1++) {
+        if (textArr[index1].match(regexOnlyOperand)) {
+          newArr.push(textArr[index1]);
+          join = '';
+        } else {
+          if (join != '') {
+            newArr.pop();
+            join += textArr[index1];
+            newArr.push(Number(join));
+          } else {
+            join += textArr[index1];
+            newArr.push(Number(textArr[index1]));
+          }
+        }
+      }
+
+      let index2 = 0;
+      while (index2 < newArr.length - 2) {
+        let num1 = newArr[index2];
+        let operand = newArr[index2 + 1];
+        let num2 = newArr[index2 + 2];
+        let calc = this.calculate(num1, num2, operand);
+        newArr[index2 + 2] = calc;
+        index2 = index2 + 2;
+        this.setState({text: text, hasil: calc});
+      }
+    }
   }
 
 
@@ -28,13 +75,11 @@ export default class App extends React.Component {
 
       <TextInput
       style={styles.inputBox}
-        value={ String(this.state.angka1)}
-         onChangeText={(text) => this.setState({angka1: text})
-       }
+           onChangeText={(text) => this.show(text)}
+
           />
 
-         <Button title="klik"
-         onPress={this.hitung}/>
+
          <Text style={{fontSize:25}}> Hasil </Text>
             <Text style={{fontSize:20}}> {this.state.hasil} </Text>
       </View>
