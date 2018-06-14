@@ -1,18 +1,11 @@
 import React from 'react';
-import {createStackNavigator} from 'react-navigation'
-import HomeScreen from './screens/Home.js'
-import AboutScreen from './screens/About.js'
+import { createStackNavigator } from 'react-navigation'
+import PapanScreen from './screens/Papan'
+import LoginScreen from './screens/Login'
 
 const RootStack = createStackNavigator({
-  Home: {
-    screen: HomeScreen
-  },
-  About: {
-    screen: AboutScreen
-  }
-},
-  {
-    initialRouteName: 'Home'
-  })
+  Login: LoginScreen,
+  Papan: PapanScreen
+}, { initialRouteName: 'Login' })
 
 export default RootStack
