@@ -5,7 +5,7 @@ import ListKotak from '../components/ListKotak'
 class PapanScreen extends React.Component {
 
   static navigationOptions = {
-    title: 'Game'
+    title: 'Ular Tangga'
   }
 
   constructor() {
@@ -121,7 +121,7 @@ class PapanScreen extends React.Component {
         <View style={styles.containerButton}>
           <Button
             style={styles.button}
-            title="Lempar Dadu"
+            title="Mulai"
             onPress={this.lemparDadu} />
         </View>
       </View>
