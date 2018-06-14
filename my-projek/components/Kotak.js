@@ -35,7 +35,7 @@ const styles = StyleSheet.create({
   posisi: {
     width: 50,
     height: 50,
-    backgroundColor: 'red',
+    backgroundColor: 'blue',
     borderColor: 'gray',
     borderWidth: 1,
   }
