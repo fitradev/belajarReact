@@ -1,85 +1,36 @@
-// import React from 'react';
-// import { StyleSheet, Text, View, Button, TextInput } from 'react-native';
-//
-//
-// export default class App extends React.Component {
-//   static navigationOptions = {
-//     title: 'Login'
-//
-//   }
-//   constructor(){
-//     super()
-//     this.state = {
-//       header: 'Ular Tangga',
-//       username: ''
-//
-//     }
-//     this.masuk = this.masuk.bind(this)
-//   }
-//
-// Username(name) {
-//   this.setState({ username: name })
-// }
-//
-// Login() {
-//   let name = this.state.name
-//   if (name == '') {
-//     alert('nama belum dimasukan')
-//   } else {
-//     this.props.navigation.navigate('Page', { name: name })
-//   }
-// }
-//
-//
-//
-//
-//   render() {
-//
-//     const {showAbout} = this.state
-//
-//     return (
-//       <View style={styles.container}>
-//       <Text style={styles.logoText}> {this.state.header}</Text>
-//       <TextInput
-//       style={styles.inputBox}
-//       placeholder="Username"
-//       placeholderTextColor = "#ffffff"
-//       selectionColor="#fff"
-//       onChangeText={(name) => this.Username(name)}
-//       ></Text>
-//
-//
-//
-//       <Button title="Login"
-//         onPress={this.Login}/>
-//       </View>
-//     );
-//   }
-// }
-//
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     backgroundColor: '#455a64',
-//     alignItems: 'center',
-//     justifyContent: 'center',
-//     margin: 32
-//   },
-//   inputBox: {
-//     width: '80%',
-//     borderWidth: 1,
-//     borderColor: 'black',
-//     borderRadius: 6,
-//     padding: 12,
-//     margin: 6,
-//     color:'#ffffff',
-//   } ,
-//
-//
-// logoText : {
-// marginVertical: 15,
-// fontSize:32,
-// color:'rgba(255, 255, 255, 0.7)'
-// }
-//
-// });
+import React from 'react'
+import axios from 'axios'
+import ListNews from '../components/ListNews'
+import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
+import { setNews } from '../store/actions'
+
+class HomeScreen extends React.Component {
+
+  static navigationOptions = {
+    title: 'Indonesia Today'
+  }
+
+  componentDidMount() {
+    axios.get('https://newsapi.org/v2/top-headlines?country=id&apiKey=7d848d73b1de439696a0ba1014e08ed3').then(res => this.props.setNews(res.data.articles))
+      .catch(err => console.log(err))
+  }
+
+  render() {
+    return (
+      <ListNews
+        data={this.props.redux.news}
+        nav={this.props.navigation} />
+    )
+  }
+}
+
+const mapStateToProps = (state) => {
+  return {
+    redux: state
+  }
+}
+
+const mapDispatchToProps = (dispatch) => bindActionCreators({ setNews }, dispatch)
+
+export default connect(mapStateToProps, mapDispatchToProps)(HomeScreen)
