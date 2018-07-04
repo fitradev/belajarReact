@@ -1,36 +1,102 @@
-import React from 'react'
-import axios from 'axios'
-import ListNews from '../components/ListNews'
+import React, { Component } from 'react'
+import { View, TouchableOpacity, Text, TextInput, TouchableHighlight, Alert } from 'react-native'
+import * as firebase from 'firebase'
+import styles from '../utils/Styles'
+import messages from '../utils/Messages'
+import { getVideos, searchVideos } from '../store/action'
 import { connect } from 'react-redux'
-import { bindActionCreators } from 'redux'
-import { setNews } from '../store/actions'
+import ListVideo from '../components/ListVideo';
 
-class HomeScreen extends React.Component {
+class HomeScreen extends Component {
 
-  static navigationOptions = {
-    title: 'Indonesia Today'
+  static navigationOptions = ({ navigation }) => {
+    return {
+      title: 'UTube',
+      headerRight: (
+        <TouchableOpacity
+          onPress={navigation.getParam('signOut')}>
+          <Text style={{ padding: 10, color: '#fff' }}>
+            SignOut
+          </Text>
+        </TouchableOpacity>
+      ),
+      headerLeft: (
+        <TouchableOpacity
+          onPress={(navigation.getParam('favPage'))}>
+          <Text style={{ padding: 10, color: '#fff' }}>
+            Favorites
+          </Text>
+        </TouchableOpacity>
+      )
+    }
+  }
+
+  constructor(props) {
+    super(props)
+    this.state = {
+      query: '',
+      user: {}
+    }
   }
 
   componentDidMount() {
-    axios.get('https://newsapi.org/v2/top-headlines?country=id&apiKey=7d848d73b1de439696a0ba1014e08ed3').then(res => this.props.setNews(res.data.articles))
+    this.props.getVideos()
+    this.props.navigation.setParams({ signOut: this._signOut, favPage: this._favPage })
+    firebase.auth().onAuthStateChanged(user => {
+      if (user) {
+        this.setState({ user: user })
+      } else {
+        this.props.navigation.navigate('Auth')
+      }
+    })
+  }
+
+  _favPage() {
+    this.props.navigation.navigate('Favorite')
+  }
+
+  _signOut() {
+    firebase.auth().signOut()
+      .then(() => {
+        Alert.alert('Success', messages.SIGN_OUT)
+        this.props.navigation.navigate('Auth')
+      })
       .catch(err => console.log(err))
   }
 
+  _getVideo(id) {
+    this.props.navigation.navigate('Detail', { id: id })
+  }
+
+  _searchVideo() {
+    this.props.searchVideos(this.state.query)
+  }
+
   render() {
+    const { videos } = this.props.videos
+
     return (
-      <ListNews
-        data={this.props.redux.news}
-        nav={this.props.navigation} />
+      <View style={styles.homeContainer}>
+        <View style={styles.searchContainer}>
+          <TextInput
+            style={styles.inputSearch}
+            onChangeText={text => this.setState({ query: text })}
+            placeholder="Search video"
+            autoCapitalize="none"
+            value={this.state.query}
+          />
+          <TouchableHighlight
+            style={styles.buttonSearch}
+            onPress={() => this._searchVideo()}>
+            <Text style={styles.textSearch}>Search</Text>
+          </TouchableHighlight>
+        </View>
+        <ListVideo videos={videos} nav={this.props.navigation} />
+      </View>
     )
   }
 }
 
-const mapStateToProps = (state) => {
-  return {
-    redux: state
-  }
-}
+const mapStateToProps = state => ({ videos: state.videos })
 
-const mapDispatchToProps = (dispatch) => bindActionCreators({ setNews }, dispatch)
-
-export default connect(mapStateToProps, mapDispatchToProps)(HomeScreen)
+export default connect(mapStateToProps, { getVideos, searchVideos })(HomeScreen)

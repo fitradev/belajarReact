@@ -1,6 +1,22 @@
-import { createStore } from 'redux'
-import reducers from './reducers'
+import { combineReducers, createStore, applyMiddleware, compose } from 'redux'
+import thunk from 'redux-thunk'
+import videoReducers from './videoReducers'
+import favReducers from './favReducers'
 
-const store = createStore(reducers)
+const rootReducers = combineReducers({
+  videos: videoReducers,
+  favs: favReducers
+})
+
+const initialState = {}
+const middleware = [thunk]
+
+const store = createStore(
+  rootReducers,
+  initialState,
+  compose(
+    applyMiddleware(...middleware)
+  )
+)
 
 export default store

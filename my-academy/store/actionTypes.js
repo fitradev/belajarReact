@@ -1,2 +1,6 @@
-export const SET_NEWS = 'SET_NEWS'
-export const GET_NEWS = 'GET_NEWS'
+export const GET_VIDEOS = 'GET_VIDEOS'
+export const SHOW_VIDEO = 'SHOW_VIDEO'
+export const SEARCH_VIDEOS = 'SEARCH_VIDEOS'
+export const VIDEOS_LOADING = 'VIDEOS_LOADING'
+export const ADD_FAV = 'ADD_FAV'
+export const GET_FAVS = 'GET_FAVS'

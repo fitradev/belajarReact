@@ -1,23 +1,44 @@
-import React from 'react';
-import { createStackNavigator } from 'react-navigation'
-import HomeScreen from './screens/Home'
-import DetailScreen from './screens/Detail'
+import React from 'react'
+import { createStackNavigator, createSwitchNavigator } from 'react-navigation'
+import { HomeScreen, DetailScreen, LoginScreen, RegisterScreen, FavoriteScreen } from './screens/Index'
 import { Provider } from 'react-redux'
 import store from './store'
 
-const RootStack = createStackNavigator({
-  Home: HomeScreen,
-  Detail: DetailScreen
-}, {
-    initialRouteName: 'Home'
-  })
-
-export default class App extends React.Component {
-  render() {
-    return (
-      <Provider store={store}>
-        <RootStack />
-      </Provider>
-    )
+const navigationOptions = {
+  headerStyle: {
+    backgroundColor: '#ef2f4f',
+  },
+  headerTintColor: '#fff',
+  headerTitleStyle: {
+    fontWeight: 'bold',
   }
 }
+
+const AuthStack = createStackNavigator({
+  Login: LoginScreen,
+  Register: RegisterScreen
+}, {
+    initialRouteName: 'Login', navigationOptions: navigationOptions
+  })
+
+const AppStack = createStackNavigator({
+  Home: HomeScreen,
+  Detail: DetailScreen,
+  Favorite: FavoriteScreen
+}, {
+    initialRouteName: 'Home', navigationOptions: navigationOptions
+  })
+
+const Navigator = createSwitchNavigator({
+  Auth: AuthStack,
+  App: AppStack
+}, {
+    initialRouteName: 'Auth'
+  })
+
+const App = () => (
+  <Provider store={store}>
+    <Navigator />
+  </Provider>
+)
+export default App
