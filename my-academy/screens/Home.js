@@ -1,132 +1,36 @@
-import React from 'react';
-import { StyleSheet, Text, View, Button, TextInput, Image, ScrollView } from 'react-native';
+import React from 'react'
 import axios from 'axios'
+import ListNews from '../components/ListNews'
+import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
+import { setNews } from '../store/actions'
 
+class HomeScreen extends React.Component {
 
-export default class App extends React.Component {
   static navigationOptions = {
-    title: 'Home'
-
-  }
-  constructor(){
-    super()
-    this.state = {
-      header: 'Kalkulator',
-      hasil: 0,
-      input: '',
-      yesno:{}
-
-    }
-  }
-  input = (text) => {
-    const inputValue = text;
-
-    this.setState({input: inputValue})
-    const hasil = this.hasilPerhitungan(inputValue)
-    this.setState({hasil: hasil})
+    title: 'Indonesia Today'
   }
 
-  hasilPerhitungan = (inputValue) => {
-    const arrayInput = inputValue.split("");
-    let hasil = 0;
-    let angka1 = "";
-    let angka2 = "";
-    let operator = "";
-
-    for (var i = 0; i < arrayInput.length; i++) {
-      switch (arrayInput[i]){
-        case "+": operator = "+"; angka1 = hasil; angka2 = ""; break;
-        case "-": operator = "-"; angka1 = hasil; angka2 = ""; break;
-        case "*": operator = "*"; angka1 = hasil; angka2 = ""; break;
-        case "/": operator = "/"; angka1 = hasil; angka2 = ""; break;
-        default:
-
-        arrayInput[i] == " " ? angka2 = "" : angka2 += String(arrayInput[i])
-
-        angka1 == "" ? angka1 = angka2 : hasil;
-
-        if (arrayInput[i] != " ") {
-          switch(operator){
-            case "+": hasil = Number(angka1) + Number(angka2); break;
-            case "-": hasil = Number(angka1) - Number(angka2); break;
-            case "*": hasil = Number(angka1) * Number(angka2); break;
-            case "/": hasil = Number(angka1) / Number(angka2); break;
-            default: hasil = Number(angka1) + 0;
-          }
-        }
-      }
-
-    }
-
-    return hasil;
+  componentDidMount() {
+    axios.get('https://newsapi.org/v2/top-headlines?country=id&apiKey=7d848d73b1de439696a0ba1014e08ed3').then(res => this.props.setNews(res.data.articles))
+      .catch(err => console.log(err))
   }
-
-componentDidMount(){
-  axios.get('https://yesno.wtf/api').then((res) => this.setState({yesno: res.data})).catch(err => console.log(err))
-}
 
   render() {
-
-    const {showAbout, yesno} = this.state
-    const arrayOperator = [{
-      name: 'Tambah',
-      operator: '+'
-    },{
-      name: 'Kurang',
-      operator: '-'
-    },{
-      name: 'Kali',
-      operator: '*'
-    },{
-      name: 'Bagi',
-      operator: '/'
-    }]
     return (
-      <View style={styles.container}>
-      <Text style={ {fontSize:32}}> {this.state.header}</Text>
-      <TextInput
-      style={styles.inputBox}
-      value={this.state.input}
-      onChangeText={(text) => this.input(text)}/>
-
-      <Text style={{fontSize:25}}> Hasil </Text>
-      <Text style={{fontSize:24}}> {yesno.answer} </Text>
-      <Image source={{uri: yesno.image}} style={{width: 100, height:100}} />
-      <Text style={{fontSize:20}}> {this.state.hasil} </Text>
-      {
-        arrayOperator.map((data, index) => {
-
-          return (
-            <Button key={index} title={ data.name }
-              onPress={ () => {
-              const {input} = this.state
-              const angkaBaru = `${input}${data.operator}`
-              this.setState({input: angkaBaru})
-            }}/>
-          )
-        })
-      }
-      <Button title="Go to About Screen"
-        onPress={() => this.props.navigation.navigate('About',{ text: 'ini adalah data dari params' })}/>
-      </View>
-    );
+      <ListNews
+        data={this.props.redux.news}
+        nav={this.props.navigation} />
+    )
   }
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-    margin: 32
-  },
-  inputBox: {
-    width: '100%',
-    borderWidth: 1,
-    borderColor: 'black',
-    borderRadius: 6,
-    padding: 12,
-    margin: 6
+const mapStateToProps = (state) => {
+  return {
+    redux: state
   }
-});
+}
+
+const mapDispatchToProps = (dispatch) => bindActionCreators({ setNews }, dispatch)
+
+export default connect(mapStateToProps, mapDispatchToProps)(HomeScreen)
